@@ -1,6 +1,7 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Home from "./pages/Home.svelte";
+  import Join from "./pages/Join.svelte";
   import Room from "./pages/Room.svelte";
 
   export let url = "";
@@ -11,14 +12,21 @@
 
 <style>
   :global(body) {
-    --primary: #140e45;
-    --secondary: #25178a;
+    --back1: #140e45;
+    --back2: #25178a;
+    --highlight1: #11998e;
+    --highlight2: #38EF7D;
+    --error: #F71735;
+    overflow: hidden;
   }
 </style>
 
 <Router {url}>
   <Route path="/">
     <Home />
+  </Route>
+  <Route path="join">
+    <Join />
   </Route>
   <Route>
     <Room id={roomId} />

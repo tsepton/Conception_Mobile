@@ -1,5 +1,6 @@
 <script>
   export let href;
+  import { link } from "svelte-routing";
 </script>
 
 <style>
@@ -11,17 +12,21 @@
     border-radius: 0.12em;
     box-sizing: border-box;
     text-decoration: none;
-    font-family: "Roboto", sans-serif;
-    font-weight: 300;
+    font-weight: 100;
     color: #ffffff;
     text-align: center;
     transition: all 0.2s;
   }
   a:hover {
     color: #000000;
-    background-color: #ffffff;
+    border: 0.1em solid var(--highlight1);
+    background-image: linear-gradient(
+      to right,
+      var(--highlight1),
+      var(--highlight2)
+    );
     cursor: pointer;
   }
 </style>
 
-<a {href}><slot /></a>
+<a use:link {href}><slot /></a>

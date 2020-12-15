@@ -1,6 +1,7 @@
 <script>
   import { fade, fly } from "svelte/transition";
   import Button from "../components/Button.svelte";
+import Input from "../components/Input.svelte";
 </script>
 
 <style>
@@ -11,24 +12,15 @@
     justify-content: center;
     align-items: center;
   }
-  h1,
-  h6 {
-    color: white;
-    font-weight: 100;
-  }
-  h6 {
-    padding-bottom: 1rem;
-  }
-  div[center] {
+  [center] {
     text-align: center;
+    border: 1px solid red;
+    min-width: max-content;
   }
 </style>
 
 <main in:fly={{ y: 200, duration: 1200 }}>
   <div center>
-    <h1>Welcome to Mõla</h1>
-    <h6>What do you want to do ?</h6>
-    <Button href="join">Join room</Button>
-    <Button>Create room</Button>
+    <Input>Enter the room ID</Input>
   </div>
 </main>
