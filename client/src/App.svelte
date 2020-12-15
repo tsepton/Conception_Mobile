@@ -1,7 +1,21 @@
 <script>
-  let roomId;
+  import { Router, Route } from "svelte-routing";
+  import Navbar from "./components/Navbar.svelte";
+  import Home from "./pages/Home.svelte";
+  import Room from "./pages/Room.svelte";
 
-  $: roomId = window.location.href.split("/").pop();
+  export let url = "";
+
+  let roomId;
+  $: url, roomId = window.location.href.split("/").pop();
 </script>
 
-<main>{roomId}</main>
+<Router {url}>
+  <Navbar />
+  <Route path="/">
+    <Home />
+  </Route>
+  <Route>
+    <Room id={roomId} />
+  </Route>
+</Router>
