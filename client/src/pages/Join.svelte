@@ -1,7 +1,6 @@
 <script>
-  import { fade, fly } from "svelte/transition";
-  import Button from "../components/Button.svelte";
-import Input from "../components/Input.svelte";
+  import { fly } from "svelte/transition";
+  import Input from "../components/Input.svelte";
 </script>
 
 <style>

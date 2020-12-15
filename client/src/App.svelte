@@ -1,13 +1,9 @@
 <script>
   import { Router, Route } from "svelte-routing";
   import Home from "./pages/Home.svelte";
-  import Join from "./pages/Join.svelte";
   import Room from "./pages/Room.svelte";
 
   export let url = "";
-
-  let roomId;
-  $: url, (roomId = window.location.href.split("/").pop());
 </script>
 
 <style>
@@ -15,8 +11,8 @@
     --back1: #140e45;
     --back2: #25178a;
     --highlight1: #11998e;
-    --highlight2: #38EF7D;
-    --error: #F71735;
+    --highlight2: #38ef7d;
+    --error: #f71735;
     overflow: hidden;
   }
 </style>
@@ -25,10 +21,7 @@
   <Route path="/">
     <Home />
   </Route>
-  <Route path="join">
-    <Join />
-  </Route>
   <Route>
-    <Room id={roomId} />
+    <Room />
   </Route>
 </Router>

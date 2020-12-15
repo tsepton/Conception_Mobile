@@ -38,7 +38,7 @@
     {:else if !showInput}
       <div in:fade={{ duration: 800 }}>
         <Button on:click={() => (showInput = true)}>Join room</Button>
-        <Button>Create room</Button>
+        <Button href="room">Create room</Button>
       </div>
     {/if}
   </div>
