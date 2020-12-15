@@ -68,12 +68,12 @@ button:focus {
 
 body {
 	background: linear-gradient(47deg, #0c1124, #4a35e8);
-	background-size: 400% 400%;
+	background-size: 300% 100%;
 
-	-webkit-animation: GradientAnimation 30s ease infinite;
-	-moz-animation: GradientAnimation 30s ease infinite;
-	-o-animation: GradientAnimation 30s ease infinite;
-	animation: GradientAnimation 30s ease infinite;
+	-webkit-animation: GradientAnimation 25s ease infinite;
+	-moz-animation: GradientAnimation 25s ease infinite;
+	-o-animation: GradientAnimation 25s ease infinite;
+	animation: GradientAnimation 25s ease infinite;
 }
 
 @-webkit-keyframes GradientAnimation {
