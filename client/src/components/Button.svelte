@@ -1,6 +1,9 @@
 <script>
-  export let href;
+  import { createEventDispatcher } from "svelte";
   import { link } from "svelte-routing";
+
+  export let href;
+  const dispatch = createEventDispatcher();
 </script>
 
 <style>
@@ -29,4 +32,4 @@
   }
 </style>
 
-<a use:link {href}><slot /></a>
+<a use:link on:click={() => dispatch('click')} {href}><slot /></a>

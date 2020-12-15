@@ -1,6 +1,9 @@
 <script>
   import { fade, fly } from "svelte/transition";
   import Button from "../components/Button.svelte";
+  import Input from "../components/Input.svelte";
+
+  let showInput = false;
 </script>
 
 <style>
@@ -28,7 +31,15 @@
   <div center>
     <h1>Welcome to Mõla</h1>
     <h6>What do you want to do ?</h6>
-    <Button href="join">Join room</Button>
-    <Button>Create room</Button>
+    {#if showInput}
+      <div in:fade={{ duration: 800 }}>
+        <Input on:blur={() => (showInput = false)}>Enter the room ID</Input>
+      </div>
+    {:else if !showInput}
+      <div in:fade={{ duration: 800 }}>
+        <Button on:click={() => (showInput = true)}>Join room</Button>
+        <Button>Create room</Button>
+      </div>
+    {/if}
   </div>
 </main>

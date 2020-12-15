@@ -1,15 +1,21 @@
 <!-- Adaptetd from : https://codepen.io/lucasyem/pen/ZEEYKdj?editors=1100 -->
+<script>
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
+</script>
+
 <style>
   .group {
     position: relative;
     padding: 15px 0 0;
-    margin-top: 10px;
     width: 100%;
     min-width: max-content;
   }
 
   .field {
     border: 0;
+    width: 100%;
     color: #fff;
     border-bottom: 2px solid #fff;
     background: transparent;
@@ -57,6 +63,11 @@
 </style>
 
 <div class="group">
-  <input type="input" class="field" placeholder="" maxlength="4" required />
+  <input
+    type="input"
+    class="field"
+    placeholder=""
+    maxlength="4"
+    on:blur={() => dispatch('blur')} />
   <label for="name" class="label"><slot /></label>
 </div>
