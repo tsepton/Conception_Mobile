@@ -67,56 +67,20 @@ button:focus {
 }
 
 body {
-	background: linear-gradient(47deg, #0c1124, #4a35e8);
-	background-size: 300% 100%;
-
-	-webkit-animation: GradientAnimation 25s ease infinite;
-	-moz-animation: GradientAnimation 25s ease infinite;
-	-o-animation: GradientAnimation 25s ease infinite;
-	animation: GradientAnimation 25s ease infinite;
+	background: linear-gradient(19deg, #3D1DA3,  #5304D1, #310BDB,  #1364E8, #11F1F5);
+	background-size: 500% 300%;
+	animation: GradientAnimation 10s ease infinite;
 }
 
-@-webkit-keyframes GradientAnimation {
-	0% {
-		background-position: 14% 0%;
-	}
-	50% {
-		background-position: 87% 100%;
-	}
-	100% {
-		background-position: 14% 0%;
-	}
-}
-@-moz-keyframes GradientAnimation {
-	0% {
-		background-position: 14% 0%;
-	}
-	50% {
-		background-position: 87% 100%;
-	}
-	100% {
-		background-position: 14% 0%;
-	}
-}
-@-o-keyframes GradientAnimation {
-	0% {
-		background-position: 14% 0%;
-	}
-	50% {
-		background-position: 87% 100%;
-	}
-	100% {
-		background-position: 14% 0%;
-	}
-}
+
 @keyframes GradientAnimation {
 	0% {
-		background-position: 14% 0%;
+		background-position: 0% 50%;
 	}
 	50% {
-		background-position: 87% 100%;
+		background-position: 100% 50%;
 	}
 	100% {
-		background-position: 14% 0%;
+		background-position: 0% 50%;
 	}
 }
