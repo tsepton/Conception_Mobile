@@ -1,14 +1,34 @@
 <script>
-  import { fly, fade } from "svelte/transition";
+  import { fade } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Card from "../components/Card.svelte";
+  import TextEdit from "../components/TextEdit.svelte";
 
   let id;
-  let cards = [{}, {}, {}, {}, {}, {}, {}, {}, {}];
+  let cards = [
+    {
+      id: 1,
+      title: "Title",
+      body: "Enter your text here",
+    },
+  ];
   // TODO :  Link with backend
 
   function addCard() {
-    cards = [...cards, {}];
+    const lastCard = cards.pop();
+    if (lastCard) {
+      cards = [
+        ...cards,
+        lastCard,
+        { id: lastCard.id + 1, title: "Title", body: "Enter your text here" },
+      ];
+    } else {
+      cards = [{ id: 1, title: "Title", body: "Enter your text here" }];
+    }
+  }
+
+  function removeCard(id) {
+    cards = cards.filter((card) => card.id !== id);
   }
 
   $: id = window.location.href.split("/").pop();
@@ -30,6 +50,7 @@
     flex-flow: row wrap;
     justify-content: space-between;
     align-items: center;
+    align-content: center;
     padding-right: 25px;
     padding-left: 25px;
     overflow-y: scroll;
@@ -48,6 +69,8 @@
   }
   .card-item {
     margin: 10px;
+    max-width: 33vw;
+    min-width: min-content;
     flex-grow: 4;
   }
   .button-container {
@@ -62,12 +85,15 @@
 <main in:fade={{ duration: 1200 }}>
   <h1 class="title">Mõla n°{id}</h1>
   <div class="container" in:fade>
-    {#each cards as _}
+    {#each cards as card}
       <div class="card-item">
-        <Card>
-          <div slot="title">title</div>
-          <div slot="body">Lorem ipsum dolores est ma couille</div>
-          <div slot="footer">footer</div>
+        <Card on:delete={() => removeCard(card.id)}>
+          <div slot="title">
+            <TextEdit bind:value={card.title} />
+          </div>
+          <div slot="body">
+            <TextEdit bind:value={card.body} />
+          </div>
         </Card>
       </div>
     {/each}

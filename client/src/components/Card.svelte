@@ -24,14 +24,14 @@
   }
   h1 {
     font-size: larger;
-    font-weight: 400;
+    font-weight: 200;
   }
   .close-button {
     position: absolute;
     top: 0;
     right: 5px;
     cursor: pointer;
-    color: #8f8f8f;
+    color: #414141;
   }
 </style>
 
