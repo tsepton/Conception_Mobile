@@ -22,8 +22,7 @@
     flex-direction: column;
   }
   .container {
-    width: 100%;
-    height: 80vh;
+    width: auto;
     flex-grow: 4;
 
     /* Relative to its children */
@@ -31,7 +30,8 @@
     flex-flow: row wrap;
     justify-content: space-between;
     align-items: center;
-    padding: 25px;
+    padding-right: 25px;
+    padding-left: 25px;
     overflow-y: scroll;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
@@ -42,6 +42,7 @@
   .title {
     color: #fff;
     padding: 15px;
+    margin: 0;
     font-weight: 100;
     box-shadow: 0 0 1rem 0.1rem rgba(0, 0, 0, 0.342);
   }
