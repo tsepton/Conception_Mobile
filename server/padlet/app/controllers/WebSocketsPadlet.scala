@@ -8,6 +8,7 @@ import akka.actor.Props
 import akka.stream.Materializer
 import actors.PadletActor
 import actors.PadletManager
+import play.api.libs.json._
 
 @Singleton
 class WebSocketsController @Inject() (cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer)
@@ -20,7 +21,7 @@ extends AbstractController(cc)
         Ok(views.html.index())
     }
 
-    def ws = WebSocket.accept[String, String] { request =>
+    def ws = WebSocket.accept[JsValue, JsValue] { request =>
         ActorFlow.actorRef { out =>
             PadletActor.props(out, manager)
         }
