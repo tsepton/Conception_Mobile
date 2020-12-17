@@ -1,8 +1,10 @@
 <script>
+  import { navigate } from "svelte-routing";
   import { fade } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Card from "../components/Card.svelte";
   import TextEdit from "../components/TextEdit.svelte";
+  import store from "../stores/websockets.js";
 
   let id;
   let cards = [
@@ -12,8 +14,8 @@
       body: "Enter your text here",
     },
   ];
-  // TODO :  Link with backend
 
+  // TODO :  Link with backend
   function addCard() {
     const lastCard = cards.pop();
     if (lastCard) {
@@ -31,7 +33,8 @@
     cards = cards.filter((card) => card.id !== id);
   }
 
-  $: id = window.location.href.split("/").pop();
+  $: id = parseInt(location.href.split("/").pop());
+  $: id, !$store.includes(id) && navigate("/");
 </script>
 
 <style>
@@ -64,6 +67,7 @@
     margin: 0;
     font-weight: 100;
     box-shadow: 0 0 1rem 0.1rem rgba(0, 0, 0, 0.342);
+    cursor: pointer;
   }
   .card-item {
     margin: 10px;
@@ -81,7 +85,7 @@
 </style>
 
 <main in:fade={{ duration: 1200 }}>
-  <h1 class="title">Mõla n°{id}</h1>
+  <h1 on:click={() => navigate('/')} class="title">Mõla n°{id}</h1>
   <div class="container" in:fade>
     {#each cards as card}
       <div class="card-item">

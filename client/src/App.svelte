@@ -2,8 +2,6 @@
   import { Router, Route } from "svelte-routing";
   import Home from "./pages/Home.svelte";
   import Room from "./pages/Room.svelte";
-
-  export let url = "";
 </script>
 
 <style>
@@ -17,7 +15,7 @@
   }
 </style>
 
-<Router {url}>
+<Router>
   <Route path="/">
     <Home />
   </Route>
