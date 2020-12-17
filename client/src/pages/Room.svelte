@@ -4,9 +4,9 @@
   import Button from "../components/Button.svelte";
   import Card from "../components/Card.svelte";
   import TextEdit from "../components/TextEdit.svelte";
-  import store from "../stores/websockets.js";
+  import rooms from "../stores/rooms.js";
 
-  let id;
+  let id = parseInt(location.href.split("/").pop());
   let cards = [
     {
       id: 1,
@@ -33,8 +33,7 @@
     cards = cards.filter((card) => card.id !== id);
   }
 
-  $: id = parseInt(location.href.split("/").pop());
-  $: id, !$store.includes(id) && navigate("/");
+  $: id, !($rooms).includes(id) && navigate("/");
 </script>
 
 <style>

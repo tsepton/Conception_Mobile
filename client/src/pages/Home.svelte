@@ -2,6 +2,7 @@
   import { fade, fly } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Input from "../components/Input.svelte";
+  import rooms from "../stores/rooms.js";
 
   let showInput = false;
 </script>
@@ -37,8 +38,10 @@
       </div>
     {:else if !showInput}
       <div in:fade={{ duration: 800 }}>
-        <Button on:click={() => (showInput = true)}>Join room</Button>
-        <Button href="room">Create room</Button>
+        {#if $rooms.length}
+          <Button on:click={() => (showInput = true)}>Join room</Button>
+        {/if}
+        <Button on:click={rooms.create}>Create room</Button>
       </div>
     {/if}
   </div>
