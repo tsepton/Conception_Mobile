@@ -1,4 +1,5 @@
 <script>
+  import { navigate } from "svelte-routing";
   import { fade, fly } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Input from "../components/Input.svelte";
@@ -34,9 +35,13 @@
     <h6>What do you want to do ?</h6>
     {#if showInput}
       <div in:fade={{ duration: 800 }}>
-        <Input on:blur={() => (showInput = false)}>Enter the room ID</Input>
+        <Input
+          on:enter={(e) => navigate(e.detail.value)}
+          on:blur={() => (showInput = false)}>
+          Enter the room ID
+        </Input>
       </div>
-    {:else if !showInput}
+    {:else}
       <div in:fade={{ duration: 800 }}>
         {#if $rooms.length}
           <Button on:click={() => (showInput = true)}>Join room</Button>

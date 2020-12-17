@@ -3,6 +3,11 @@
   import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
+  let value = undefined;
+
+  function handleKeyup(e) {
+    e.code === "Enter" && dispatch("enter", { value });
+  }
 </script>
 
 <style>
@@ -68,6 +73,8 @@
     class="field"
     placeholder=""
     maxlength="4"
-    on:blur={() => dispatch('blur')} />
+    bind:value
+    on:blur={() => dispatch('blur')}
+    on:keyup|preventDefault={handleKeyup} />
   <label for="name" class="label"><slot /></label>
 </div>

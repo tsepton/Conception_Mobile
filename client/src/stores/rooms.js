@@ -13,8 +13,8 @@ socket.onmessage = (e) => {
       break;
     case "enter_room":
       // FIXME: This will bug if we use the store outside of the router's scope
-      console.debug("room", message.room, store);
-      store.update((rooms) => [... new Set([...rooms, message.room])])
+      console.debug("room", message.room);
+      store.update((rooms) => [... new Set([...rooms, message.room])]);
       navigate(message.room);
       break;
   }
