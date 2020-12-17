@@ -1,4 +1,7 @@
 *.class
 *.log
-metals/*
-vscode/*
+.metals/*
+.vscode/*
+.scalafmt.conf
+
+
