@@ -9,11 +9,14 @@ import akka.stream.Materializer
 import actors.PadletActor
 import actors.PadletManager
 import play.api.libs.json._
+import play.api.mvc.WebSocket.MessageFlowTransformer
 
 @Singleton
 class WebSocketsController @Inject() (cc: ControllerComponents)(implicit system: ActorSystem, mat: Materializer)
 extends AbstractController(cc)
 {
+
+    implicit val transformer = MessageFlowTransformer.jsonMessageFlowTransformer
 
     val manager = system.actorOf(Props[PadletManager], "Manager")
 

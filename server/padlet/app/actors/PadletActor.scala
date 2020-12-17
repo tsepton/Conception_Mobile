@@ -19,7 +19,8 @@ class PadletActor(out: ActorRef, manager: ActorRef) extends Actor {
     import PadletActor._
     
     def receive = {
-        case json: JsValue => manager ! PadletManager.Message(json)
+        case json: JsValue => 
+            manager ! PadletManager.Message(json, self)
         case SendMessage(json) => out ! json
         case m => println("Unhandled message in PadletActor: " + m)
     }
