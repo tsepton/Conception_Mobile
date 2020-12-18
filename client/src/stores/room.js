@@ -1,23 +1,20 @@
-import socket from "./websockets.js";
+import wsStore from "./websockets.js";
 import { writable } from 'svelte/store';
 
 const store = writable(undefined);
-
-socket.onmessage = (e) => {
-  const message = JSON.parse(e.data);
-  switch (message.event) {
-    case "rooms":
-      console.debug("all rooms : ", message.rooms);
-      break;
-    case "enter_room":
-      console.debug("room", message.room);
-      store.set(message.room);
-      break;
+wsStore.subscribe(( ) => {
+  socket.onmessage = (e) => {
+    const message = JSON.parse(e.data);
+    console.debug("new message : ", message);
+    switch (message.event) {
+      case "enter_room":
+        store.set(message.room);
+        break;
+    }
   }
-}
+});
 
 function createRoom() {
-  console.debug("createRoom");
   try {
     socket.send(JSON.stringify({ event: "create_room" }));
   } catch (error) {
@@ -26,7 +23,6 @@ function createRoom() {
 }
 
 function joinRoom(id) {
-  console.debug("joinRoom", id);
   try {
     socket.send(JSON.stringify({ event: "join_room", id }));
   } catch (error) {
@@ -35,7 +31,6 @@ function joinRoom(id) {
 }
 
 function leaveRoom() {
-  console.debug("leaveRoom");
   try {
     socket.send(JSON.stringify({ event: "leave_room" }));
     store.set(undefined);
