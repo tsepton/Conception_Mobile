@@ -8,8 +8,8 @@
   // if not, wait untill a room is specified
   let id = parseInt(location.href.split("/").pop());
   $: !Number.isNaN(id) && room.join(id);
-  $: $room
-    ? navigate($room, { replace: true })
+  $: $room && $room.id
+    ? navigate($room.id, { replace: true })
     : navigate("/", { replace: true });
 </script>
 

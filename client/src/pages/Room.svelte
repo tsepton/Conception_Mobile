@@ -7,35 +7,9 @@
   import TextEdit from "../components/TextEdit.svelte";
   import { navigate } from "svelte-routing";
 
-  let cards = [
-    {
-      id: 1,
-      title: "Title",
-      body: "Enter your text here",
-    },
-  ];
-
-  // TODO :  Link with backend
-  function addCard() {
-    const lastCard = cards.pop();
-    if (lastCard) {
-      cards = [
-        ...cards,
-        lastCard,
-        { id: lastCard.id + 1, title: "Title", body: "Enter your text here" },
-      ];
-    } else {
-      cards = [{ id: 1, title: "Title", body: "Enter your text here" }];
-    }
-  }
-
-  function removeCard(id) {
-    cards = cards.filter((card) => card.id !== id);
-  }
-
   onMount(() => {
     // If room does not exist, go back to home page
-    if (!$room) {
+    if (!$room && $room.id) {
       console.warn("Room does not exist.");
       room.leave();
       navigate("/", { replace: true });
@@ -44,7 +18,7 @@
 
   onDestroy(() => {
     // Tell the server we're leaving the room
-    if ($room) {
+    if ($room && $room.id) {
       console.log("Leaving room.");
       room.leave();
     }
@@ -100,12 +74,12 @@
 
 <main in:fade={{ duration: 1200 }}>
   <h1 on:click={() => navigate('/', { replace: true })} class="title">
-    Mõla n°{$room}
+    Mõla n°{$room.id}
   </h1>
   <div class="container" in:fade>
-    {#each cards as card}
+    {#each $room.cards as card}
       <div class="card-item">
-        <Card on:delete={() => removeCard(card.id)}>
+        <Card on:delete={() => room.cards.delete(card.id)}>
           <div slot="title">
             <TextEdit bind:value={card.title} />
           </div>
@@ -117,6 +91,6 @@
     {/each}
   </div>
   <div class="button-container" in:fade>
-    <Button on:click={addCard}>Add card</Button>
+    <Button on:click={room.cards.add}>Add card</Button>
   </div>
 </main>

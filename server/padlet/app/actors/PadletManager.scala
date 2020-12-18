@@ -33,7 +33,7 @@ class PadletManager extends Actor {
         case Some("create_room") =>
           val roomId = {
             if (rooms.isEmpty)
-              0
+              1
             else
               rooms.keys.max + 1
           }

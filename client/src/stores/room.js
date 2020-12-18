@@ -2,16 +2,25 @@ import wsStore from "./websockets.js";
 import { writable } from 'svelte/store';
 
 const store = writable(undefined);
+
 let socket;
 wsStore.subscribe((ws) => {
   socket = ws;
   socket.onmessage = (e) => {
     const message = JSON.parse(e.data);
     console.debug("new message : ", message);
+
     switch (message.event) {
+      // Room related event
       case "enter_room":
-        store.set(message.room);
+        store.set({ id: message.room, cards: [] });
         break;
+
+      // Cards related event
+      case "new_card":
+        console.log("TODO, new card");
+        break;
+
     }
   }
 });
@@ -38,9 +47,21 @@ function leaveRoom() {
   }
 }
 
+function addCard() {
+
+}
+
+function deleteCard(id) {
+
+}
+
 export default {
   subscribe: store.subscribe,
   create: createRoom,
   join: joinRoom,
   leave: leaveRoom,
+  cards: {
+    add: addCard,
+    delete: deleteCard,
+  }
 }
