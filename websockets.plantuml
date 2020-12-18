@@ -1,0 +1,23 @@
+@startuml
+skinparam responseMessageBelowArrow true
+
+group Keeping connection alive [new connection, each time it fails]
+    Client ->x Server :  init connection
+    Client -> Server : init connection
+group creating room
+    Client -> Server : create_room
+    Server -> Client : enter_room, {id: roomID, cards: [...]}
+end 
+
+group joining room
+    Client -> Server : join_room, {id: roomID}
+    Server -> Client : enter_room, {id: roomID, cards: [...]} 
+end 
+
+group once in a room
+    Client -> Server : TODO
+end
+end
+
+
+@enduml
