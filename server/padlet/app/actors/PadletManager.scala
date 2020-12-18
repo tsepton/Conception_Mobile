@@ -64,6 +64,9 @@ class PadletManager extends Actor {
             case None =>
           }
 
+        case Some("leave_room") => println("TODO, remove user from room")
+          
+
         // Handle other cases
         case None =>
       }

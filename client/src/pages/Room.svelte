@@ -1,12 +1,12 @@
 <script>
-  import { navigate } from "svelte-routing";
+  import room from "../stores/room.js";
+  import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Card from "../components/Card.svelte";
   import TextEdit from "../components/TextEdit.svelte";
-  import rooms from "../stores/rooms.js";
+  import { navigate } from "svelte-routing";
 
-  let id = parseInt(location.href.split("/").pop());
   let cards = [
     {
       id: 1,
@@ -33,7 +33,22 @@
     cards = cards.filter((card) => card.id !== id);
   }
 
-  $: id, !($rooms).includes(id) && navigate("/");
+  onMount(() => {
+    // If room does not exist, go back to home page
+    if (!$room) {
+      console.warn("Room does not exist.");
+      room.leave();
+      navigate("/", { replace: true });
+    }
+  });
+
+  onDestroy(() => {
+    // Tell the server we're leaving the room
+    if ($room) {
+      console.log("Leaving room.");
+      room.leave();
+    }
+  });
 </script>
 
 <style>
@@ -84,7 +99,9 @@
 </style>
 
 <main in:fade={{ duration: 1200 }}>
-  <h1 on:click={() => navigate('/')} class="title">Mõla n°{id}</h1>
+  <h1 on:click={() => navigate('/', { replace: true })} class="title">
+    Mõla n°{$room}
+  </h1>
   <div class="container" in:fade>
     {#each cards as card}
       <div class="card-item">

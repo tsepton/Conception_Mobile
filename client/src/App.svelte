@@ -1,7 +1,16 @@
 <script>
-  import { Router, Route } from "svelte-routing";
+  import room from "./stores/room.js";
+  import { Router, Route, navigate } from "svelte-routing";
   import Home from "./pages/Home.svelte";
   import Room from "./pages/Room.svelte";
+
+  // If room id was specified within URL, attempt the connection,
+  // if not, wait untill a room is specified
+  let id = parseInt(location.href.split("/").pop());
+  $: !Number.isNaN(id) && room.join(id);
+  $: $room
+    ? navigate($room, { replace: true })
+    : navigate("/", { replace: true });
 </script>
 
 <style>

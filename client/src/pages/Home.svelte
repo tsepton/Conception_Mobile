@@ -1,9 +1,8 @@
 <script>
-  import { navigate } from "svelte-routing";
   import { fade, fly } from "svelte/transition";
   import Button from "../components/Button.svelte";
   import Input from "../components/Input.svelte";
-  import rooms from "../stores/rooms.js";
+  import room from "../stores/room.js";
 
   let showInput = false;
 </script>
@@ -36,17 +35,15 @@
     {#if showInput}
       <div in:fade={{ duration: 800 }}>
         <Input
-          on:enter={(e) => navigate(e.detail.value)}
+          on:enter={(e) => room.join(parseInt(e.detail.value))}
           on:blur={() => (showInput = false)}>
           Enter the room ID
         </Input>
       </div>
     {:else}
       <div in:fade={{ duration: 800 }}>
-        {#if $rooms.length}
-          <Button on:click={() => (showInput = true)}>Join room</Button>
-        {/if}
-        <Button on:click={rooms.create}>Create room</Button>
+        <Button on:click={() => (showInput = true)}>Join room</Button>
+        <Button on:click={room.create}>Create room</Button>
       </div>
     {/if}
   </div>
