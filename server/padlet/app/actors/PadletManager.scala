@@ -4,6 +4,7 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import scala.collection.mutable.Map
 import play.api.libs.json._
+import scala.util.{Try, Success, Failure}
 
 object PadletManager {
   case class NewUser(user: ActorRef)
@@ -19,12 +20,6 @@ class PadletManager extends Actor {
   def receive = {
     case NewUser(user) =>
       println("New connection")
-      user ! PadletActor.SendMessage(
-        Json.obj(
-          "event" -> "rooms",
-          "rooms" -> Json.toJson(rooms.keys)
-        )
-      )
     case Message(json, user) =>
       println("received event")
       (json \ "event").asOpt[String] match {
@@ -48,24 +43,28 @@ class PadletManager extends Actor {
               "room" -> Json.toJson(roomId)
             )
           )
+          user ! PadletActor.ChangeRoom(rooms(roomId))
 
-        // Handle user joining room
+        // Handle user joining room 
         case Some("join_room") =>
-          (json \ "id").asOpt[Int] match {
-            case Some(id) => {
-              rooms(id) ! RoomManager.AddUser(user)
-              user ! PadletActor.SendMessage(
-                Json.obj(
-                  "event" -> "enter_room",
-                  "room" -> Json.toJson(id)
+            (json \ "id").asOpt[Int] match {
+              case Some(id) if rooms.values.exists(_ == id) => {
+                rooms(id) ! RoomManager.AddUser(user)
+                user ! PadletActor.SendMessage(
+                  Json.obj(
+                    "event" -> "enter_room",
+                    "room" -> Json.toJson(id)
+                  )
                 )
-              )
+                user ! PadletActor.ChangeRoom(rooms(id))
+              }
+              case None =>
+              case _ => println("Room doesn't exist")
             }
-            case None =>
-          }
 
-        case Some("leave_room") => println("TODO, remove user from room")
-          
+        // Handle user leave room
+        case Some("leave_room") => 
+              user ! PadletActor.LeaveRoom()
 
         // Handle other cases
         case None =>

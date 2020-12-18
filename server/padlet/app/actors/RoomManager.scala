@@ -10,6 +10,7 @@ object RoomManager {
     def props(id: Int) = Props(new RoomManager(id)) 
 
     case class AddUser(user: ActorRef)
+    case class RemoveUser(user: ActorRef)
     case class Message(json: JsValue)
 }
 
@@ -23,9 +24,13 @@ class RoomManager(id: Int) extends Actor {
         case AddUser(user) => 
             println("Add user to room " + id + ": " + user)
             users ::= user
+            println(users)
+        case RemoveUser(user) => 
+            println("Remove user from room " + id + ": " + user)
+            users = users.filter(_!=user)
+            println(users)
         case Message(json) => 
-            //println(json)
-            //for (user <- users) user ! PadletActor.SendMessage(json)
+            // TODO: Handle messages for cards on padlet
         case m => println("Unhandled message in RoomManager: " + m)
     }
 } 
