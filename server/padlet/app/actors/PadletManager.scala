@@ -67,7 +67,7 @@ class PadletManager extends Actor {
               user ! PadletActor.LeaveRoom()
 
         // Handle other cases
-        case None =>
+        case _ => println("TODO ma poule")
       }
 
     //for (user <- users) user ! PadletActor.SendMessage(json)
