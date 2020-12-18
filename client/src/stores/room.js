@@ -2,7 +2,9 @@ import wsStore from "./websockets.js";
 import { writable } from 'svelte/store';
 
 const store = writable(undefined);
-wsStore.subscribe(( ) => {
+let socket;
+wsStore.subscribe((ws) => {
+  socket = ws;
   socket.onmessage = (e) => {
     const message = JSON.parse(e.data);
     console.debug("new message : ", message);
@@ -15,27 +17,26 @@ wsStore.subscribe(( ) => {
 });
 
 function createRoom() {
-  try {
+  console.debug("create_room", socket.readyState);
+  if (socket.readyState) {
+    console.log("SALUYT PYUTAIN")
     socket.send(JSON.stringify({ event: "create_room" }));
-  } catch (error) {
-    console.error("Websocket error...", error.toString());
   }
 }
 
 function joinRoom(id) {
-  try {
+  console.debug("join_room", socket.readyState);
+  if (socket.readyState)
     socket.send(JSON.stringify({ event: "join_room", id }));
-  } catch (error) {
-    console.error("Websocket error...", error.toString());
-  }
+  else socket.onopen = () =>
+    socket.send(JSON.stringify({ event: "join_room", id }));
 }
 
 function leaveRoom() {
-  try {
+  console.debug("leave_room", socket.readyState);
+  if (socket.readyState) {
     socket.send(JSON.stringify({ event: "leave_room" }));
     store.set(undefined);
-  } catch (error) {
-    console.error("Websocket error...", error.toString());
   }
 }
 
