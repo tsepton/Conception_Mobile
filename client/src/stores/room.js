@@ -18,10 +18,8 @@ wsStore.subscribe((ws) => {
 
 function createRoom() {
   console.debug("create_room", socket.readyState);
-  if (socket.readyState) {
-    console.log("SALUYT PYUTAIN")
+  if (socket.readyState)
     socket.send(JSON.stringify({ event: "create_room" }));
-  }
 }
 
 function joinRoom(id) {
