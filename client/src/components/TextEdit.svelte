@@ -1,7 +1,13 @@
 <script>
-  export let value = "";
-  let focus = false;
   // FIXME : let the cursor appear directly (input.select())
+
+  export let value = "";
+
+  let focus = false;
+
+  function handleKeyup(e) {
+    if (e.code === "Enter") focus = false;
+  }
 </script>
 
 <style>
@@ -21,7 +27,11 @@
 </style>
 
 {#if focus}
-  <input type="text" bind:value on:blur={() => (focus = false)} />
+  <input
+    type="text"
+    bind:value
+    on:blur={() => (focus = false)}
+    on:keyup|preventDefault={handleKeyup} />
 {:else}
   <div on:dblclick={() => (focus = true)}>
     <p>{value}</p>
