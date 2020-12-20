@@ -21,10 +21,15 @@ wsStore.subscribe((ws) => {
       case "created_card":
         store.update(room => {
           return { id: room.id, cards: [...room.cards, message.card] }
-        })
+        });
         break;
       case "deleted_card":
-        console.log("TODO, new card");
+        store.update(room => {
+          return {
+            id: room.id,
+            cards: room.cards.filter(card => card.id !== message.id)
+          }
+        });
         break;
       case "error_modifying_card":
         console.log("TODO, resync client cards");

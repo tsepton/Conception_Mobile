@@ -25,27 +25,42 @@ class Room(id: Int) extends Actor {
   import Room._
 
   def receive: PartialFunction[Any, Unit] = {
-    case AddUser(user)    => this.AddUser(user)
+    case AddUser(user)    => addUser(user)
     case RemoveUser(user) => users = users.filter(_ != user)
-    case NewCard()        => this.NewCard()
-    case DeleteCard(id)   => cards = cards.filter(_ != id)
+    case NewCard()        => newCard()
+    case DeleteCard(id)   => deleteCard(id)
 
     case Message(json) =>
     case message       => println("Unhandled message in Room: " + message)
   }
 
-  def AddUser(user: ActorRef): Unit = {
+  def addUser(user: ActorRef): Unit = {
     users ::= user
-    user ! User.SendMessage(Json.obj("event" -> "enter_room", "room" -> Json.toJson(id), "cards" -> cards.map(card => card.toJson()) ))
+    user ! User.SendMessage(
+      Json.obj(
+        "event" -> "enter_room",
+        "room" -> Json.toJson(id),
+        "cards" -> cards.map(card => card.toJson())
+      )
+    )
     user ! User.ChangeRoom(self)
   }
 
-  def NewCard(): Unit = {
-    val newCard = new Card(cards.length)
-    cards ::= newCard
+  def newCard(): Unit = {
+    val card = new Card(cards.length)
+    cards ::= card
     users.foreach(user =>
       user ! User.SendMessage(
-        Json.obj("event" -> "created_card", "card" -> newCard.toJson())
+        Json.obj("event" -> "created_card", "card" -> card.toJson())
+      )
+    )
+  }
+
+  def deleteCard(id: Int): Unit = {
+    cards = cards.filter(_ != id)
+    users.foreach(user =>
+      user ! User.SendMessage(
+        Json.obj("event" -> "deleted_card", "id" -> id)
       )
     )
   }

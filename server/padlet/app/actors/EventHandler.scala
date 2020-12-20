@@ -18,6 +18,11 @@ class EventHandler extends Actor {
 
   import EventHandler._
 
+  def getUserRoom(user: ActorRef): ActorRef = {
+    val roomId: Int = (usersRooms(user))
+    rooms(roomId)
+  }
+
   def createRoom(user: ActorRef): Unit = {
     val roomId = if (rooms.isEmpty) 1 else rooms.keys.max + 1
     rooms += (roomId -> context.actorOf(
@@ -44,12 +49,6 @@ class EventHandler extends Actor {
     }
   }
 
-  def newCard(user: ActorRef): Unit = {
-    val roomId: Int = (usersRooms(user))
-    val room: ActorRef = rooms(roomId)
-    room ! Room.NewCard()
-  }
-
   def receive: PartialFunction[Any, Unit] = {
     case NewUser(user) => println("New connection")
     case Message(json, user) =>
@@ -61,14 +60,13 @@ class EventHandler extends Actor {
         case Some("leave_room")  => user ! User.LeaveRoom()
 
         // Room's cards related
-        case Some("new_card")    => newCard(user)
-        case Some("delete_card") =>
+        case Some("new_card")    => getUserRoom(user) ! Room.NewCard()
+        case Some("delete_card") => getUserRoom(user) ! Room.DeleteCard((json \ "id").asOpt[Int].get)
         case Some("update_card") =>
         case event               => println("Unhandled event received " + event)
         // TODO
       }
 
-    //for (user <- users) user ! User.SendMessage(json)
-    case message => println("Unhandled message in Room: " + message)
+    case message => println("Unhandled message: " + message)
   }
 }
