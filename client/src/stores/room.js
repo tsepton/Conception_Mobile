@@ -14,7 +14,7 @@ wsStore.subscribe((ws) => {
     switch (message.event) {
       // Room related event
       case "enter_room":
-        store.set({ id: message.room, cards: [] });
+        store.set({ id: message.room, cards: message.cards });
         break;
 
       // Cards related event

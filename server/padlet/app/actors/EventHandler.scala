@@ -25,10 +25,6 @@ class EventHandler extends Actor {
       roomId.toString()
     ))
     rooms(roomId) ! Room.AddUser(user)
-    user ! User.SendMessage(
-      Json.obj("event" -> "enter_room", "room" -> Json.toJson(roomId))
-    )
-    user ! User.ChangeRoom(rooms(roomId))
     usersRooms += (user -> roomId)
   }
 
@@ -36,10 +32,6 @@ class EventHandler extends Actor {
     (json \ "id").asOpt[Int] match {
       case Some(id) if rooms.keys.exists(_ == id) =>
         rooms(id) ! Room.AddUser(user)
-        user ! User.SendMessage(
-          Json.obj("event" -> "enter_room", "room" -> Json.toJson(id))
-        )
-        user ! User.ChangeRoom(rooms(id))
         usersRooms += (user -> id)
       case Some(id) =>
         user ! User.SendMessage(
