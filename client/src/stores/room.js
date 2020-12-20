@@ -1,4 +1,5 @@
 import wsStore from "./websockets.js";
+import toastStore from "./toast.js";
 import { writable } from 'svelte/store';
 
 // TODO : Remove me, this is for testing
@@ -24,20 +25,21 @@ wsStore.subscribe((ws) => {
           id: message.room, cards // TODO : modify backend, message.cards
         });
         break;
-      case "error_entering_room":
-        console.log("TODO, make a popup or something appear");
-        break;
 
       // Cards related event
-      case "new_card":
+      case "created_card":
         console.log("TODO, new card");
         break;
       case "deleted_card":
         console.log("TODO, new card");
         break;
-
       case "error_modifying_card":
         console.log("TODO, resync client cards");
+        break;
+
+      // Other
+      case "notification":
+        toastStore.set(message.text);
         break;
     }
   }

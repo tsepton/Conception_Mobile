@@ -3,7 +3,9 @@
   import { Router, Route, navigate } from "svelte-routing";
   import Home from "./pages/Home.svelte";
   import Room from "./pages/Room.svelte";
+  import Toast from "./components/Toast.svelte";
 
+  // ----------------- Room navigation -------------------
   // If room id was specified within URL, attempt the connection,
   // if not, wait untill a room is specified
   let id = parseInt(location.href.split("/").pop());
@@ -24,6 +26,7 @@
   }
 </style>
 
+<Toast />
 <Router>
   <Route path="/">
     <Home />

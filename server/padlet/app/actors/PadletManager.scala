@@ -41,8 +41,8 @@ class PadletManager extends Actor {
       case Some(id) =>
         user ! PadletActor.SendMessage(
           Json.obj(
-            "event" -> "error",
-            "message" -> "Room does not exist"
+            "event" -> "notification",
+            "text" -> "Room does not exist"
           )
         )
       case _ =>
@@ -54,9 +54,15 @@ class PadletManager extends Actor {
     case Message(json, user) =>
       (json \ "event").asOpt[String] match {
 
+        // Room related
         case Some("create_room") => createRoom(user)
         case Some("join_room")   => joinRoom(user, json)
         case Some("leave_room")  => user ! PadletActor.LeaveRoom()
+
+        // Room's cards related
+        case Some("new_card")    =>
+        case Some("update_card") =>
+        case Some("delete_card") =>
         case _                   => println("Unhandled event received")
         // TODO
       }
