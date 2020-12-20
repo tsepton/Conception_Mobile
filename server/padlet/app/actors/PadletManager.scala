@@ -45,26 +45,26 @@ class PadletManager extends Actor {
           )
           user ! PadletActor.ChangeRoom(rooms(roomId))
 
-        // Handle user joining room 
+        // Handle user joining room
         case Some("join_room") =>
-            (json \ "id").asOpt[Int] match {
-              case Some(id) if rooms.values.exists(_ == id) => {
-                rooms(id) ! RoomManager.AddUser(user)
-                user ! PadletActor.SendMessage(
-                  Json.obj(
-                    "event" -> "enter_room",
-                    "room" -> Json.toJson(id)
-                  )
+          (json \ "id").asOpt[Int] match {
+            case Some(id) if rooms.keys.exists(_ == id) => {
+              rooms(id) ! RoomManager.AddUser(user)
+              user ! PadletActor.SendMessage(
+                Json.obj(
+                  "event" -> "enter_room",
+                  "room" -> Json.toJson(id)
                 )
-                user ! PadletActor.ChangeRoom(rooms(id))
-              }
-              case None =>
-              case _ => println("Room doesn't exist")
+              )
+              user ! PadletActor.ChangeRoom(rooms(id))
             }
+            case None =>
+            case _    => println("Room doesn't exist")
+          }
 
         // Handle user leave room
-        case Some("leave_room") => 
-              user ! PadletActor.LeaveRoom()
+        case Some("leave_room") =>
+          user ! PadletActor.LeaveRoom()
 
         // Handle other cases
         case _ => println("TODO ma poule")
