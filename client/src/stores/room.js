@@ -31,6 +31,16 @@ wsStore.subscribe((ws) => {
           }
         });
         break;
+      case "modified_card":
+        store.update(room => {
+          if (room && room.cards)
+            return {
+              id: room.id,
+              cards: room.cards.map((card) => (card.id === message.card.id) ? message.card : card)
+            }
+          else return room
+        });
+        break;
       case "error_modifying_card":
         console.log("TODO, resync client cards");
         break;
@@ -72,9 +82,9 @@ function newCard() {
 }
 
 function updateCard(card) {
-  console.debug("update_card", socket.readyState);
+  console.debug("update_card", card);
   if (socket.readyState)
-    socket.send(JSON.stringify({ event: "update_card", card }));
+    socket.send(JSON.stringify({ event: "update_card", card: card ?? {} }));
 }
 
 function deleteCard(id) {

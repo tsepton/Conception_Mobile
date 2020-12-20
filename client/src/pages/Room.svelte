@@ -7,10 +7,6 @@
   import TextEdit from "../components/TextEdit.svelte";
   import { navigate } from "svelte-routing";
 
-  // Tell the server we have updated one of our card 
-  // each time a binded value is udpated
-  $:$room && $room.data, room.cards.update();
-
   onMount(() => {
     // If room does not exist, go back to home page
     if (!$room && $room.id) {
@@ -85,10 +81,14 @@
       <div class="card-item">
         <Card on:delete={() => room.cards.delete(card.id)}>
           <div slot="title">
-            <TextEdit bind:value={card.title} />
+            <TextEdit
+              bind:value={card.title}
+              on:keyup={() => room.cards.update(card)} />
           </div>
           <div slot="body">
-            <TextEdit bind:value={card.body} />
+            <TextEdit
+              bind:value={card.body}
+              on:keyup={() => room.cards.update(card)} />
           </div>
         </Card>
       </div>

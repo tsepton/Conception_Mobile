@@ -14,6 +14,7 @@ object Room {
   case class Message(json: JsValue)
   case class NewCard()
   case class DeleteCard(id: Int)
+  case class UpdateCard(card: Card)
 }
 
 class Room(id: Int) extends Actor {
@@ -29,6 +30,7 @@ class Room(id: Int) extends Actor {
     case RemoveUser(user) => users = users.filter(_ != user)
     case NewCard()        => newCard()
     case DeleteCard(id)   => deleteCard(id)
+    case UpdateCard(card) => updateCard(card)
 
     case Message(json) =>
     case message       => println("Unhandled message in Room: " + message)
@@ -57,18 +59,36 @@ class Room(id: Int) extends Actor {
   }
 
   def deleteCard(id: Int): Unit = {
-    cards = cards.filter(_ != id)
+    cards = cards.filter(_.getId != id)
     users.foreach(user =>
       user ! User.SendMessage(
         Json.obj("event" -> "deleted_card", "id" -> id)
       )
     )
   }
+
+  def updateCard(target: Card): Unit = {
+    println(target)
+    cards.foreach(_ match {
+      case card: Card if card.getId == target.getId =>
+        card.editTitle(target.getTitle)
+        card.editBody(target.getBody)
+        users.foreach(user =>
+          user ! User.SendMessage(
+            Json.obj("event" -> "modified_card", "card" -> target.toJson())
+          )
+        )
+    })
+  }
 }
 
 class Card(id: Int) {
   private var title: String = "Title"
   private var body: String = "This the default card body..."
+
+  def getId: Int = id
+  def getTitle: String = title
+  def getBody: String = body
 
   def editTitle(title: String): Unit =
     this.title = title

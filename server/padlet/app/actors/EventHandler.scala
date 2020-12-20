@@ -49,6 +49,23 @@ class EventHandler extends Actor {
     }
   }
 
+  def updateCard(user: ActorRef, json: JsValue): Unit = {
+    (json \ "card").asOpt[JsValue] match {
+      case None => println("Warning: payload malformed")
+      case Some(json: JsValue) => {
+        Try {
+          val card = new Card((json \ "id").asOpt[Int].get)
+          card.editTitle((json \ "title").asOpt[String].get)
+          card.editBody((json \ "body").asOpt[String].get)
+          card
+        } match {
+          case Failure(_)    => println("Warning: payload malformed")
+          case Success(card) => getUserRoom(user) ! Room.UpdateCard(card)
+        }
+      }
+    }
+  }
+
   def receive: PartialFunction[Any, Unit] = {
     case NewUser(user) => println("New connection")
     case Message(json, user) =>
@@ -62,7 +79,7 @@ class EventHandler extends Actor {
         // Room's cards related
         case Some("new_card")    => getUserRoom(user) ! Room.NewCard()
         case Some("delete_card") => getUserRoom(user) ! Room.DeleteCard((json \ "id").asOpt[Int].get)
-        case Some("update_card") =>
+        case Some("update_card") => updateCard(user, json)
         case event               => println("Unhandled event received " + event)
         // TODO
       }

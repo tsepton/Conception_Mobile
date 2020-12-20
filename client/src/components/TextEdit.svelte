@@ -1,13 +1,21 @@
 <script>
+  import { createEventDispatcher } from "svelte";
+
   // FIXME : let the cursor appear directly (input.select())
 
   export let value = "";
+  let copy = `${value}`;
 
   let focus = false;
 
+  const dispatch = createEventDispatcher();
+
   function handleKeyup(e) {
     if (e.code === "Enter") focus = false;
+    dispatch("keyup");
   }
+
+  $: focus ? (value = copy) : (copy = value);
 </script>
 
 <style>
@@ -29,7 +37,7 @@
 {#if focus}
   <input
     type="text"
-    bind:value
+    bind:value={copy}
     on:blur={() => (focus = false)}
     on:keyup|preventDefault={handleKeyup} />
 {:else}
