@@ -72,6 +72,9 @@ body {
 	animation: GradientAnimation 10s ease infinite;
 }
 
+*,*:focus,*:hover{
+    outline:none;
+}
 
 @keyframes GradientAnimation {
 	0% {
