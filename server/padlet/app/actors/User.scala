@@ -18,11 +18,11 @@ object User {
 
 class User(out: ActorRef, manager: ActorRef) extends Actor {
 
+  import User._
+
   manager ! EventHandler.NewUser(self)
 
   private var room: ActorRef = _
-
-  import User._
 
   def receive: PartialFunction[Any, Unit] = {
     case json: JsValue       => manager ! EventHandler.Message(json, self)

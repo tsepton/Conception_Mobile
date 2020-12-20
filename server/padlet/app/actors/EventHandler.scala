@@ -3,8 +3,8 @@ package actors
 import akka.actor.Actor
 import akka.actor.ActorRef
 import scala.collection.mutable.Map
-import play.api.libs.json._
 import scala.util.{Try, Success, Failure}
+import play.api.libs.json._
 
 object EventHandler {
   case class NewUser(user: ActorRef)
@@ -14,6 +14,7 @@ object EventHandler {
 class EventHandler extends Actor {
 
   private var rooms: Map[Int, ActorRef] = Map()
+  private var usersRooms: Map[ActorRef, Int] = Map()
 
   import EventHandler._
 
@@ -28,6 +29,7 @@ class EventHandler extends Actor {
       Json.obj("event" -> "enter_room", "room" -> Json.toJson(roomId))
     )
     user ! User.ChangeRoom(rooms(roomId))
+    usersRooms += (user -> roomId)
   }
 
   def joinRoom(user: ActorRef, json: JsValue): Unit = {
@@ -38,6 +40,7 @@ class EventHandler extends Actor {
           Json.obj("event" -> "enter_room", "room" -> Json.toJson(id))
         )
         user ! User.ChangeRoom(rooms(id))
+        usersRooms += (user -> id)
       case Some(id) =>
         user ! User.SendMessage(
           Json.obj(
@@ -47,6 +50,12 @@ class EventHandler extends Actor {
         )
       case _ =>
     }
+  }
+
+  def newCard(user: ActorRef): Unit = {
+    val roomId: Int = (usersRooms(user))
+    val room: ActorRef = rooms(roomId)
+    room ! Room.NewCard()
   }
 
   def receive: PartialFunction[Any, Unit] = {
@@ -60,10 +69,10 @@ class EventHandler extends Actor {
         case Some("leave_room")  => user ! User.LeaveRoom()
 
         // Room's cards related
-        case Some("new_card")    =>
-        case Some("update_card") =>
+        case Some("new_card")    => newCard(user)
         case Some("delete_card") =>
-        case _                   => println("Unhandled event received")
+        case Some("update_card") =>
+        case event               => println("Unhandled event received " + event)
         // TODO
       }
 

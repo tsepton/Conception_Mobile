@@ -2,13 +2,6 @@ import wsStore from "./websockets.js";
 import toastStore from "./toast.js";
 import { writable } from 'svelte/store';
 
-// TODO : Remove me, this is for testing
-const cards = [{
-  id: 1,
-  title: "Title",
-  body: "Enter your text here",
-}]
-
 const store = writable(undefined);
 
 let socket;
@@ -21,14 +14,14 @@ wsStore.subscribe((ws) => {
     switch (message.event) {
       // Room related event
       case "enter_room":
-        store.set({
-          id: message.room, cards // TODO : modify backend, message.cards
-        });
+        store.set({ id: message.room, cards: [] });
         break;
 
       // Cards related event
       case "created_card":
-        console.log("TODO, new card");
+        store.update(room => {
+          return { id: room.id, cards: [...room.cards, message.card] }
+        })
         break;
       case "deleted_card":
         console.log("TODO, new card");
