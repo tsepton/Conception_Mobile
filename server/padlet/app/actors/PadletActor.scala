@@ -8,7 +8,7 @@ import scala.util.{Try, Success, Failure}
 
 object PadletActor {
 
-  def props(out: ActorRef, manager: ActorRef) =
+  def props(out: ActorRef, manager: ActorRef): Props =
     Props(new PadletActor(out, manager))
 
   case class SendMessage(json: JsValue)
@@ -24,7 +24,7 @@ class PadletActor(out: ActorRef, manager: ActorRef) extends Actor {
 
   import PadletActor._
 
-  def receive = {
+  def receive: PartialFunction[Any, Unit] = {
     case json: JsValue       => manager ! PadletManager.Message(json, self)
     case SendMessage(json)   => out ! json
     case ChangeRoom(roomRef) => room = roomRef

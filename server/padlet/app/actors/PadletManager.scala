@@ -17,60 +17,51 @@ class PadletManager extends Actor {
 
   import PadletManager._
 
-  def receive = {
-    case NewUser(user) =>
-      println("New connection")
+  def createRoom(user: ActorRef): Unit = {
+    val roomId = if (rooms.isEmpty) 1 else rooms.keys.max + 1
+    rooms += (roomId -> context.actorOf(
+      RoomManager.props(roomId),
+      roomId.toString()
+    ))
+    rooms(roomId) ! RoomManager.AddUser(user)
+    user ! PadletActor.SendMessage(
+      Json.obj("event" -> "enter_room", "room" -> Json.toJson(roomId))
+    )
+    user ! PadletActor.ChangeRoom(rooms(roomId))
+  }
+
+  def joinRoom(user: ActorRef, json: JsValue): Unit = {
+    (json \ "id").asOpt[Int] match {
+      case Some(id) if rooms.keys.exists(_ == id) =>
+        rooms(id) ! RoomManager.AddUser(user)
+        user ! PadletActor.SendMessage(
+          Json.obj("event" -> "enter_room", "room" -> Json.toJson(id))
+        )
+        user ! PadletActor.ChangeRoom(rooms(id))
+      case Some(id) =>
+        user ! PadletActor.SendMessage(
+          Json.obj(
+            "event" -> "error",
+            "message" -> "Room does not exist"
+          )
+        )
+      case _ =>
+    }
+  }
+
+  def receive: PartialFunction[Any, Unit] = {
+    case NewUser(user) => println("New connection")
     case Message(json, user) =>
-      println("received event")
       (json \ "event").asOpt[String] match {
 
-        // Handle creating room
-        case Some("create_room") =>
-          val roomId = {
-            if (rooms.isEmpty)
-              1
-            else
-              rooms.keys.max + 1
-          }
-          rooms += (roomId -> context.actorOf(
-            RoomManager.props(roomId),
-            roomId.toString()
-          ))
-          rooms(roomId) ! RoomManager.AddUser(user)
-          user ! PadletActor.SendMessage(
-            Json.obj(
-              "event" -> "enter_room",
-              "room" -> Json.toJson(roomId)
-            )
-          )
-          user ! PadletActor.ChangeRoom(rooms(roomId))
-
-        // Handle user joining room
-        case Some("join_room") =>
-          (json \ "id").asOpt[Int] match {
-            case Some(id) if rooms.keys.exists(_ == id) => {
-              rooms(id) ! RoomManager.AddUser(user)
-              user ! PadletActor.SendMessage(
-                Json.obj(
-                  "event" -> "enter_room",
-                  "room" -> Json.toJson(id)
-                )
-              )
-              user ! PadletActor.ChangeRoom(rooms(id))
-            }
-            case None =>
-            case _    => println("Room doesn't exist")
-          }
-
-        // Handle user leave room
-        case Some("leave_room") =>
-          user ! PadletActor.LeaveRoom()
-
-        // Handle other cases
-        case _ => println("TODO ma poule")
+        case Some("create_room") => createRoom(user)
+        case Some("join_room")   => joinRoom(user, json)
+        case Some("leave_room")  => user ! PadletActor.LeaveRoom()
+        case _                   => println("Unhandled event received")
+        // TODO
       }
 
     //for (user <- users) user ! PadletActor.SendMessage(json)
-    case m => println("Unhandled message in RoomManager: " + m)
+    case message => println("Unhandled message in RoomManager: " + message)
   }
 }
