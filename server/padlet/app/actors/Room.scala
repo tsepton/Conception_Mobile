@@ -75,9 +75,10 @@ class Room(id: Int) extends Actor {
         card.editBody(target.getBody)
         users.foreach(user =>
           user ! User.SendMessage(
-            Json.obj("event" -> "modified_card", "card" -> target.toJson())
+            Json.obj("event" -> "modified_card", "card" -> card.toJson())
           )
         )
+      case _ =>
     })
   }
 }

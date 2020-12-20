@@ -49,6 +49,13 @@ class EventHandler extends Actor {
     }
   }
 
+  def deleteCard(user: ActorRef, json: JsValue): Unit = {
+    (json \ "id").asOpt[Int] match {
+      case None => println("Warning: payload malformed")
+      case Some(id: Int) => getUserRoom(user) ! Room.DeleteCard(id)
+    }
+  }
+
   def updateCard(user: ActorRef, json: JsValue): Unit = {
     (json \ "card").asOpt[JsValue] match {
       case None => println("Warning: payload malformed")
@@ -78,7 +85,7 @@ class EventHandler extends Actor {
 
         // Room's cards related
         case Some("new_card")    => getUserRoom(user) ! Room.NewCard()
-        case Some("delete_card") => getUserRoom(user) ! Room.DeleteCard((json \ "id").asOpt[Int].get)
+        case Some("delete_card") => deleteCard(user, json)
         case Some("update_card") => updateCard(user, json)
         case event               => println("Unhandled event received " + event)
         // TODO
