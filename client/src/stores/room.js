@@ -4,7 +4,10 @@ import { writable } from 'svelte/store';
 
 const store = writable(undefined);
 
+let roomId;
 let socket;
+
+store.subscribe(room => roomId = room?.id);
 wsStore.subscribe((ws) => {
   socket = ws;
   socket.onmessage = (e) => {
@@ -20,7 +23,7 @@ wsStore.subscribe((ws) => {
       // Cards related event
       case "created_card":
         store.update(room => {
-          return { id: room.id, cards: [...room.cards, message.card] }
+          return { id: room.id, cards: [...room.cards, message.card] };
         });
         break;
       case "deleted_card":
@@ -28,7 +31,7 @@ wsStore.subscribe((ws) => {
           return {
             id: room.id,
             cards: room.cards.filter(card => card.id !== message.id)
-          }
+          };
         });
         break;
       case "modified_card":
@@ -36,20 +39,28 @@ wsStore.subscribe((ws) => {
           if (room && room.cards)
             return {
               id: room.id,
-              cards: room.cards.map((card) => (card.id === message.card.id) ? message.card : card)
-            }
-          else return room
+              cards: room.cards.map((card) =>
+                (card.id === message.card.id) ? message.card : card)
+            };
+          else return room;
         });
-        break;
-      case "error_modifying_card":
-        console.log("TODO, resync client cards");
         break;
 
       // Other
+      case "resync":
+        console.log("TODO, resync client cards");
+        break;
       case "notification":
         toastStore.set(message.text);
         break;
     }
+  }
+
+  socket.onerror = () => {
+    toastStore.set(`Connection lost, attempting to reconnect to mõla n°${roomId}...`);
+    console.warn(`Connection lost, entering in room n°${roomId}...`);
+    wsStore.set(new WebSocket('ws://localhost:9000/ws'));
+    joinRoom(roomId);
   }
 });
 
@@ -60,6 +71,7 @@ function createRoom() {
 }
 
 function joinRoom(id) {
+  console.log(id);
   console.debug("join_room", socket.readyState);
   if (socket.readyState)
     socket.send(JSON.stringify({ event: "join_room", id }));
