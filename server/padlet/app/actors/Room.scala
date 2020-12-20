@@ -5,25 +5,25 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import play.api.libs.json._
 
-object RoomManager {
+object Room {
 
-  def props(id: Int): Props = Props(new RoomManager(id))
+  def props(id: Int): Props = Props(new Room(id))
 
   case class AddUser(user: ActorRef)
   case class RemoveUser(user: ActorRef)
   case class Message(json: JsValue)
 }
 
-class RoomManager(id: Int) extends Actor {
+class Room(id: Int) extends Actor {
 
   private var users = List.empty[ActorRef]
 
-  import RoomManager._
+  import Room._
 
   def receive: PartialFunction[Any, Unit] = {
     case AddUser(user)    => users ::= user
     case RemoveUser(user) => users = users.filter(_ != user)
     case Message(json)    =>
-    case message          => println("Unhandled message in RoomManager: " + message)
+    case message          => println("Unhandled message in Room: " + message)
   }
 }

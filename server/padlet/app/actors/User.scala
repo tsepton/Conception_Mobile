@@ -6,34 +6,34 @@ import akka.actor.Props
 import play.api.libs.json._
 import scala.util.{Try, Success, Failure}
 
-object PadletActor {
+object User {
 
   def props(out: ActorRef, manager: ActorRef): Props =
-    Props(new PadletActor(out, manager))
+    Props(new User(out, manager))
 
   case class SendMessage(json: JsValue)
   case class ChangeRoom(roomRef: ActorRef)
   case class LeaveRoom()
 }
 
-class PadletActor(out: ActorRef, manager: ActorRef) extends Actor {
+class User(out: ActorRef, manager: ActorRef) extends Actor {
 
-  manager ! PadletManager.NewUser(self)
+  manager ! EventHandler.NewUser(self)
 
   private var room: ActorRef = _
 
-  import PadletActor._
+  import User._
 
   def receive: PartialFunction[Any, Unit] = {
-    case json: JsValue       => manager ! PadletManager.Message(json, self)
+    case json: JsValue       => manager ! EventHandler.Message(json, self)
     case SendMessage(json)   => out ! json
     case ChangeRoom(roomRef) => room = roomRef
-    case LeaveRoom()         => room ! RoomManager.RemoveUser(self)
-    case message             => println("Unhandled message in PadletActor: " + message)
+    case LeaveRoom()         => room ! Room.RemoveUser(self)
+    case message             => println("Unhandled message in User: " + message)
   }
 
   override def postStop(): Unit =
-    Try(room ! RoomManager.RemoveUser(self)) match {
+    Try(room ! Room.RemoveUser(self)) match {
       case Success(_) => println("User disconnected and left a room")
       case Failure(_) => println("User disconnected")
     }

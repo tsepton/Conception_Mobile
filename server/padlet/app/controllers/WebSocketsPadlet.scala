@@ -6,8 +6,8 @@ import javax.inject._
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.stream.Materializer
-import actors.PadletActor
-import actors.PadletManager
+import actors.User
+import actors.EventHandler
 import play.api.libs.json._
 import play.api.mvc.WebSocket.MessageFlowTransformer
 
@@ -18,7 +18,7 @@ extends AbstractController(cc)
 
     implicit val transformer = MessageFlowTransformer.jsonMessageFlowTransformer
 
-    val manager = system.actorOf(Props[PadletManager], "Manager")
+    val manager = system.actorOf(Props[EventHandler], "Manager")
 
     def index = Action { implicit request: Request[AnyContent] =>
         Ok(views.html.index())
@@ -26,7 +26,7 @@ extends AbstractController(cc)
 
     def ws = WebSocket.accept[JsValue, JsValue] { request =>
         ActorFlow.actorRef { out =>
-            PadletActor.props(out, manager)
+            User.props(out, manager)
         }
     }
 }

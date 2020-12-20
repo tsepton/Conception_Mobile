@@ -6,40 +6,40 @@ import scala.collection.mutable.Map
 import play.api.libs.json._
 import scala.util.{Try, Success, Failure}
 
-object PadletManager {
+object EventHandler {
   case class NewUser(user: ActorRef)
   case class Message(json: JsValue, user: ActorRef)
 }
 
-class PadletManager extends Actor {
+class EventHandler extends Actor {
 
   private var rooms: Map[Int, ActorRef] = Map()
 
-  import PadletManager._
+  import EventHandler._
 
   def createRoom(user: ActorRef): Unit = {
     val roomId = if (rooms.isEmpty) 1 else rooms.keys.max + 1
     rooms += (roomId -> context.actorOf(
-      RoomManager.props(roomId),
+      Room.props(roomId),
       roomId.toString()
     ))
-    rooms(roomId) ! RoomManager.AddUser(user)
-    user ! PadletActor.SendMessage(
+    rooms(roomId) ! Room.AddUser(user)
+    user ! User.SendMessage(
       Json.obj("event" -> "enter_room", "room" -> Json.toJson(roomId))
     )
-    user ! PadletActor.ChangeRoom(rooms(roomId))
+    user ! User.ChangeRoom(rooms(roomId))
   }
 
   def joinRoom(user: ActorRef, json: JsValue): Unit = {
     (json \ "id").asOpt[Int] match {
       case Some(id) if rooms.keys.exists(_ == id) =>
-        rooms(id) ! RoomManager.AddUser(user)
-        user ! PadletActor.SendMessage(
+        rooms(id) ! Room.AddUser(user)
+        user ! User.SendMessage(
           Json.obj("event" -> "enter_room", "room" -> Json.toJson(id))
         )
-        user ! PadletActor.ChangeRoom(rooms(id))
+        user ! User.ChangeRoom(rooms(id))
       case Some(id) =>
-        user ! PadletActor.SendMessage(
+        user ! User.SendMessage(
           Json.obj(
             "event" -> "notification",
             "text" -> "Room does not exist"
@@ -57,7 +57,7 @@ class PadletManager extends Actor {
         // Room related
         case Some("create_room") => createRoom(user)
         case Some("join_room")   => joinRoom(user, json)
-        case Some("leave_room")  => user ! PadletActor.LeaveRoom()
+        case Some("leave_room")  => user ! User.LeaveRoom()
 
         // Room's cards related
         case Some("new_card")    =>
@@ -67,7 +67,7 @@ class PadletManager extends Actor {
         // TODO
       }
 
-    //for (user <- users) user ! PadletActor.SendMessage(json)
-    case message => println("Unhandled message in RoomManager: " + message)
+    //for (user <- users) user ! User.SendMessage(json)
+    case message => println("Unhandled message in Room: " + message)
   }
 }
