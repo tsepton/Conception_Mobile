@@ -1,23 +1,63 @@
 @startuml
 skinparam responseMessageBelowArrow true
 
-group Keeping connection alive [new connection, each time it fails]
-    Client ->x Server :  init connection
-    Client -> Server : init connection
-group creating room
-    Client -> Server : create_room
-    Server -> Client : enter_room, {id: roomID, cards: [...]}
+participant Mathieu
+participant Server
+participant Alice
+
+== Room joining logic ==
+
+Mathieu -> Server : init connection
+Mathieu -> Server : create_room
+hnote over Server : Create room with id 123\n& add Mathieu into it
+Server --> Mathieu : enter_room, {id: 123, cards: []}
+
+...  ...
+
+
+group on connection error
+    Mathieu x<-->x Server
+    hnote over Server : Remove user\nfrom room 
+group if user is in a room
+    Mathieu -> Server : automatically re-init connection
+    Mathieu -> Server : join_room, {id: 123}
+    Server --> Mathieu : enter_room, {id: 123, cards: []} 
+end
+group else 
+    Mathieu -> Server : automatically re-init connection
+end
 end 
 
-group joining room
-    Client -> Server : join_room, {id: roomID}
-    Server -> Client : enter_room, {id: roomID, cards: [...]} 
-end 
+Alice -> Server : init connection
+Alice -> Server : join_room, {id: 123}
+Server --> Alice : enter_room, {id: 123, cards: []}
 
-group once in a room
-    Client -> Server : TODO
+group Cards logic
+Mathieu -> Server : new_card
+Server --> Mathieu : created_card, {card: {id: 1, title: "default title", body:  "default body"}}
+Server --> Alice : created_card, {card: {id: 1, title: "default title", body:  "default body"}}
+
+... ...
+
+Alice -> Server : update_card, {card: {id: 1, title: "modified title", body:  "default body"}}
+Server --> Mathieu : modified_card, {card: {id: 1, title: "modified title", body:  "default body"}}
+Server --> Alice : modified_card, {card: {id: 1, title: "modified title", body:  "default body"}}
+
+... ...
+
+
+Alice -> Server : delete_card, {id: 1}
+Server --> Mathieu : deleted_card, {card: {id: 1, title: "modified title", body:  "default body"}}
+Server --> Alice : deleted_card, {card: {id: 1, title: "modified title", body:  "default body"}}
+
 end
-end
 
+... 
 
+hnote over Alice: Close Molã tab
+Alice x-x Server 
+hnote over Server : Remove Alice\nfrom room
+hnote over Mathieu : Return to Mõla home page
+Mathieu -> Server : leave_room
+hnote over Server : Remove Mathieu\nfrom room
 @enduml
