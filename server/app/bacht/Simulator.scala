@@ -11,8 +11,9 @@ class BachTSimul(var bb: BachTStore) {
 
     agent match {
       case bacht_ast_primitive(prim, id, title, body) => {
-        if (exec_primitive(prim, id, title, body)) { (true, bacht_ast_empty_agent()) }
-        else { (false, agent) }
+        if (exec_primitive(prim, id, title, body)) {
+          (true, bacht_ast_empty_agent())
+        } else { (false, agent) }
       }
 
       case bacht_ast_agent(";", ag_i, ag_ii) => {
@@ -124,9 +125,10 @@ class BachTSimul(var bb: BachTStore) {
   ): Boolean = {
     prim match {
       case "tell" if (title != "" && body != "") => bb.tell(id, title, body)
-      case "get"                                     => bb.get(id)
-      case "ask"                                     => bb.ask(id)
-      case "nask"                                    => bb.nask(id)
+      case "tell"                                => bb.tell(id)
+      case "get"                                 => bb.get(id)
+      case "ask"                                 => bb.ask(id)
+      case "nask"                                => bb.nask(id)
     }
   }
 

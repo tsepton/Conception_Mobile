@@ -8,9 +8,12 @@ class BachTStore {
 
   var store = Map[Int, Card]()
 
-  def tell(id: Int, title: String, body: String): Boolean = {
+  def tell(id: Int, title: String = "", body: String = ""): Boolean = {
     if (!store.contains(id)) {
-      store += (id -> new Card(id, title, body))
+      (title + body) match {
+        case "" => store += (id -> new Card(id))
+        case _  => store += (id -> new Card(id, title, body))
+      }
     }
     true // Duh ?
   }
@@ -48,6 +51,10 @@ class BachTStore {
 
   def getValues {
     (for ((key, value) <- store) yield value).toList
+  }
+
+  def length: Int = {
+    store.size
   }
 }
 

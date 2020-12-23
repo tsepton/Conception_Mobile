@@ -48,13 +48,14 @@ class Room(id: Int) extends Actor {
       Json.obj(
         "event" -> "enter_room",
         "room" -> Json.toJson(id),
+        // TODO : récupérer les cartes depuis bach-mangemerde-t
         "cards" -> cards.map(card => card.toJson)
       )
     )
     user ! User.ChangeRoom(self)
   }
 
-  def newCard(): Unit = {
+  def newCardOld(): Unit = {
     val card = new Card(cards.length)
     cards ::= card
     users.foreach(user =>
@@ -64,7 +65,17 @@ class Room(id: Int) extends Actor {
     )
   }
 
-  def deleteCard(id: Int): Unit = {
+  def newCard(): Unit = {
+    val id: Int = store.length
+    simul.run(s"tell(${id})")
+    users.foreach(user =>
+      user ! User.SendMessage(
+        Json.obj("event" -> "created_card", "card" -> new Card(id).toJson)
+      )
+    )
+  }
+
+  def deleteCardOld(id: Int): Unit = {
     cards = cards.filter(_.getId != id)
     users.foreach(user =>
       user ! User.SendMessage(
@@ -73,7 +84,16 @@ class Room(id: Int) extends Actor {
     )
   }
 
-  def updateCard(target: Card): Unit = {
+  def deleteCard(id: Int): Unit = {
+    simul.run(s"get(${id})")
+    users.foreach(user =>
+      user ! User.SendMessage(
+        Json.obj("event" -> "deleted_card", "id" -> id)
+      )
+    )
+  }
+
+  def updateCardOld(target: Card): Unit = {
     cards.foreach(_ match {
       case card: Card if card.getId == target.getId =>
         // card.editTitle(target.getTitle)
@@ -85,5 +105,9 @@ class Room(id: Int) extends Actor {
         )
       case _ =>
     })
+  }
+
+  def updateCard(target: Card): Unit = {
+    simul.run(s"get(${id});tell(${id}, ${target.getTitle}, ${target.getBody})")
   }
 }

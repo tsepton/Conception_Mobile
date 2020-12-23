@@ -5,17 +5,19 @@ import scala.util.matching.Regex
 
 class BachTParsers extends RegexParsers {
 
-  def id 	: Parser[String] = ("[a-z][0-9a-zA-Z_]*").r ^^ {_.toString}
-  def title : Parser[String] = ("[a-z][0-9a-zA-Z_]*").r ^^ {_.toString}
-  def body : Parser[String] = ("[a-z][0-9a-zA-Z_]*").r ^^ {_.toString}
+  def id 	: Parser[String] = ("[0-9]*").r ^^ {_.toString}
+  def title : Parser[String] = ("^.+?(?=\\,)").r ^^ {_.toString}
+  def body : Parser[String] =  ("^.+?(?=\\))").r ^^ {_.toString}
   def separator : Parser[String] = (",").r ^^ {_.toString}
 
   val opChoice  : Parser[String] = "+" 
   val opPara    : Parser[String] = "||"
   val opSeq     : Parser[String] = ";" 
  
-  def primitive : Parser[Expr]   = "tell("~id~separator~title~body~")" ^^ {
-        case _ ~ vId ~ vseparator ~ vTitle ~ vBody ~ _ => bacht_ast_primitive("tell", vId.toInt, vTitle, vBody) }  | 
+  def primitive : Parser[Expr]   = "tell("~id~")" ^^ {
+        case _ ~ vId ~  _ => bacht_ast_primitive("tell", vId.toInt, "", "") }  | 
+                                   "tell("~id~separator~title~separator~body~")" ^^ {
+        case _ ~ vId ~ vSeparator1 ~ vTitle ~ vSeparator2 ~ vBody ~ _ => bacht_ast_primitive("tell", vId.toInt, vTitle, vBody) }  |
                                    "ask("~id~")" ^^ {
         case _ ~ vId ~ _  => bacht_ast_primitive("ask", vId.toInt) }   | 
                                    "get("~id~")" ^^ {
