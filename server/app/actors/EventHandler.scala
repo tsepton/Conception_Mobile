@@ -53,7 +53,7 @@ class EventHandler extends Actor {
 
   def deleteCard(user: ActorRef, json: JsValue): Unit = {
     (json \ "id").asOpt[Int] match {
-      case None => println("Warning: payload malformed")
+      case None          => println("Warning: payload malformed")
       case Some(id: Int) => getUserRoom(user) ! Room.DeleteCard(id)
     }
   }
@@ -63,9 +63,11 @@ class EventHandler extends Actor {
       case None => println("Warning: payload malformed")
       case Some(json: JsValue) => {
         Try {
-          val card = new Card((json \ "id").asOpt[Int].get)
-          card.editTitle((json \ "title").asOpt[String].get)
-          card.editBody((json \ "body").asOpt[String].get)
+          val card = new Card(
+            (json \ "id").asOpt[Int].get,
+            (json \ "title").asOpt[String].get,
+            (json \ "body").asOpt[String].get
+          )
           card
         } match {
           case Failure(_)    => println("Warning: payload malformed")

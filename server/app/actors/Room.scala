@@ -25,7 +25,9 @@ class Room(id: Int) extends Actor {
   // FIXME : Use mutable lists
   private var users = List.empty[ActorRef]
   private var cards = List.empty[Card]
-  //private var newCards = ;
+
+  private val store = new BachTStore();
+  private val simul = new BachTSimul(store);
 
   import Room._
 
@@ -46,7 +48,7 @@ class Room(id: Int) extends Actor {
       Json.obj(
         "event" -> "enter_room",
         "room" -> Json.toJson(id),
-        "cards" -> cards.map(card => card.toJson())
+        "cards" -> cards.map(card => card.toJson)
       )
     )
     user ! User.ChangeRoom(self)
@@ -57,7 +59,7 @@ class Room(id: Int) extends Actor {
     cards ::= card
     users.foreach(user =>
       user ! User.SendMessage(
-        Json.obj("event" -> "created_card", "card" -> card.toJson())
+        Json.obj("event" -> "created_card", "card" -> card.toJson)
       )
     )
   }
@@ -72,14 +74,13 @@ class Room(id: Int) extends Actor {
   }
 
   def updateCard(target: Card): Unit = {
-    println(target)
     cards.foreach(_ match {
       case card: Card if card.getId == target.getId =>
-        card.editTitle(target.getTitle)
-        card.editBody(target.getBody)
+        // card.editTitle(target.getTitle)
+        // card.editBody(target.getBody)
         users.foreach(user =>
           user ! User.SendMessage(
-            Json.obj("event" -> "modified_card", "card" -> card.toJson())
+            Json.obj("event" -> "modified_card", "card" -> card.toJson)
           )
         )
       case _ =>
