@@ -1,15 +1,8 @@
-/* -------------------------------------------------------------------------- 
-
-   The BachT store
-
-   
-   AUTHOR : J.-M. Jacquet and D. Darquennes
-   DATE   : March 2016
-
-----------------------------------------------------------------------------*/
+package bacht
 
 import scala.collection.mutable.Map
 import scala.swing._
+import components.Card
 
 class BachTStore {
 

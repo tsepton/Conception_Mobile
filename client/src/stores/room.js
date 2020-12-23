@@ -71,7 +71,6 @@ function createRoom() {
 }
 
 function joinRoom(id) {
-  console.log(id);
   console.debug("join_room", socket.readyState);
   if (socket.readyState)
     socket.send(JSON.stringify({ event: "join_room", id }));

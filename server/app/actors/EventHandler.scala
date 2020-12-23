@@ -6,6 +6,8 @@ import scala.collection.mutable.Map
 import scala.util.{Try, Success, Failure}
 import play.api.libs.json._
 
+import components.Card
+
 object EventHandler {
   case class NewUser(user: ActorRef)
   case class Message(json: JsValue, user: ActorRef)

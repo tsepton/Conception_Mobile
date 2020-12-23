@@ -5,6 +5,9 @@ import akka.actor.ActorRef
 import akka.actor.Props
 import play.api.libs.json._
 
+import bacht._
+import components.Card
+
 object Room {
 
   def props(id: Int): Props = Props(new Room(id))
@@ -22,6 +25,7 @@ class Room(id: Int) extends Actor {
   // FIXME : Use mutable lists
   private var users = List.empty[ActorRef]
   private var cards = List.empty[Card]
+  //private var newCards = ;
 
   import Room._
 
@@ -81,22 +85,4 @@ class Room(id: Int) extends Actor {
       case _ =>
     })
   }
-}
-
-class Card(id: Int) {
-  private var title: String = "Title"
-  private var body: String = "This the default card body..."
-
-  def getId: Int = id
-  def getTitle: String = title
-  def getBody: String = body
-
-  def editTitle(title: String): Unit =
-    this.title = title
-
-  def editBody(body: String): Unit =
-    this.body = body
-
-  def toJson(): JsValue =
-    Json.obj("id" -> this.id, "title" -> this.title, "body" -> this.body)
 }

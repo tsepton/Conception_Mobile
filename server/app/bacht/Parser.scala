@@ -1,11 +1,4 @@
-/* -------------------------------------------------------------------------- 
-
-   The BachT parser
-   
-   AUTHOR : J.-M. Jacquet and D. Darquennes
-   DATE   : March 2016
-
-----------------------------------------------------------------------------*/
+package bacht
 
 import scala.util.parsing.combinator._
 import scala.util.matching.Regex
