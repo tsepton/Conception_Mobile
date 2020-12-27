@@ -108,5 +108,10 @@ class Room(id: Int) extends Actor {
 
   def updateCard(target: Card): Unit = {
     simul.run(s"get(${id});tell(${id}, ${target.getTitle}, ${target.getBody})")
+    users.foreach(user =>
+      user ! User.SendMessage(
+        Json.obj("event" -> "modified_card", "card" -> target.toJson)
+      )
+    )
   }
 }
