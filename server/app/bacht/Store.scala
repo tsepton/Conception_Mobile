@@ -49,13 +49,9 @@ class BachTStore {
     (for ((key, value) <- store) yield s"${key} : ${value}").mkString("\n")
   }
 
-  def getValues {
-    (for ((key, value) <- store) yield value).toList
-  }
+  def getValues: List[Card] = store.values.toList
 
-  def length: Int = {
-    store.size
-  }
+  def length: Int = store.size
 }
 
 object bb extends BachTStore {

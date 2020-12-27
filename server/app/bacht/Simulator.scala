@@ -104,15 +104,14 @@ class BachTSimul(var bb: BachTStore) {
           false
         }
       }
-      bb.print_store
-      println("\n")
+      //bb.print_store
     }
 
     if (c_agent == bacht_ast_empty_agent()) {
-      println("Success\n")
+      //println("Success\n")
       true
     } else {
-      println("failure\n")
+      //println("failure\n")
       false
     }
   }

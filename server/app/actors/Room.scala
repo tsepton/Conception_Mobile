@@ -48,8 +48,7 @@ class Room(id: Int) extends Actor {
       Json.obj(
         "event" -> "enter_room",
         "room" -> Json.toJson(id),
-        // TODO : récupérer les cartes depuis bach-mangemerde-t
-        "cards" -> cards.map(card => card.toJson)
+        "cards" -> store.getValues.map(card => card.toJson)
       )
     )
     user ! User.ChangeRoom(self)
