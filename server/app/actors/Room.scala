@@ -22,10 +22,7 @@ object Room {
 
 class Room(id: Int) extends Actor {
 
-  // FIXME : Use mutable lists
   private var users = List.empty[ActorRef]
-  private var cards = List.empty[Card]
-
   private val store = new BachTStore();
   private val simul = new BachTSimul(store);
 
@@ -54,31 +51,12 @@ class Room(id: Int) extends Actor {
     user ! User.ChangeRoom(self)
   }
 
-  def newCardOld(): Unit = {
-    val card = new Card(cards.length)
-    cards ::= card
-    users.foreach(user =>
-      user ! User.SendMessage(
-        Json.obj("event" -> "created_card", "card" -> card.toJson)
-      )
-    )
-  }
-
   def newCard(): Unit = {
     val id: Int = store.length
     simul.run(s"tell(${id})")
     users.foreach(user =>
       user ! User.SendMessage(
         Json.obj("event" -> "created_card", "card" -> new Card(id).toJson)
-      )
-    )
-  }
-
-  def deleteCardOld(id: Int): Unit = {
-    cards = cards.filter(_.getId != id)
-    users.foreach(user =>
-      user ! User.SendMessage(
-        Json.obj("event" -> "deleted_card", "id" -> id)
       )
     )
   }
@@ -92,22 +70,8 @@ class Room(id: Int) extends Actor {
     )
   }
 
-  def updateCardOld(target: Card): Unit = {
-    cards.foreach(_ match {
-      case card: Card if card.getId == target.getId =>
-        // card.editTitle(target.getTitle)
-        // card.editBody(target.getBody)
-        users.foreach(user =>
-          user ! User.SendMessage(
-            Json.obj("event" -> "modified_card", "card" -> card.toJson)
-          )
-        )
-      case _ =>
-    })
-  }
-
   def updateCard(target: Card): Unit = {
-    simul.run(s"get(${id});tell(${id}, ${target.getTitle}, ${target.getBody})")
+    simul.run(s"get(${target.getId});tell(${target.getId}, ${target.getTitle}, ${target.getBody})")
     users.foreach(user =>
       user ! User.SendMessage(
         Json.obj("event" -> "modified_card", "card" -> target.toJson)
