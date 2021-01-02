@@ -38,8 +38,7 @@ RUN cd /tmp/build && \
 COPY server/ /root/app/
 WORKDIR /root/app
 COPY --from=builder  /tmp/client/public/* public/ 
-
-RUN sbt compile 
+COPY --from=builder  /tmp/client/public/build/* public/build/ 
 
 EXPOSE 80
 CMD sbt "start -Dhttp.port=80"

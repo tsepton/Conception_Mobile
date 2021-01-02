@@ -4,6 +4,6 @@
 # ~~~~
 
 GET     /                           controllers.FrontendController.index()
-GET     /ws                         controllers.WebSocketsController.ws
+GET     /ws/                        controllers.WebSocketsController.ws
 GET     /*file                      controllers.FrontendController.asset(file)
 GET     /build/*file                controllers.FrontendController.buildAsset(file)
