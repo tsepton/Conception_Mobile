@@ -20,6 +20,9 @@ class FrontendController @Inject() (
 
   def index: Action[AnyContent] = assets.at("index.html")
 
-  def assetOrDefault(resource: String): Action[AnyContent] =
+  def asset(resource: String): Action[AnyContent] =
     if (resource.contains(".")) assets.at(resource) else index
+
+  def buildAsset(resource: String): Action[AnyContent] =
+    if (resource.contains(".")) assets.at(s"build/${resource}") else index
 }
