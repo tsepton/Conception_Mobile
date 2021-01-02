@@ -20,10 +20,6 @@ extends AbstractController(cc)
 
     val manager = system.actorOf(Props[EventHandler], "Manager")
 
-    def index = Action { implicit request: Request[AnyContent] =>
-        Ok(views.html.index())
-    }
-
     def ws = WebSocket.accept[JsValue, JsValue] { request =>
         ActorFlow.actorRef { out =>
             User.props(out, manager)
