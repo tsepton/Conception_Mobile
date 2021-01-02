@@ -1,5 +1,5 @@
-name := """padlet"""
-organization := "com.padlet"
+name := """mola"""
+organization := "be.tsepton.mola"
 
 version := "1.0-SNAPSHOT"
 
