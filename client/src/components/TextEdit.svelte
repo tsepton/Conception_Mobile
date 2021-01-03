@@ -12,10 +12,13 @@
 
   function handleKeyup(e) {
     if (e.code === "Enter") focus = false;
-    dispatch("keyup");
+    dispatch("keyup", copy);
   }
 
-  $: focus ? (value = copy) : (copy = value);
+  function handleDblClick() {
+    copy = value;
+    focus = true;
+  }
 </script>
 
 <style>
@@ -41,7 +44,7 @@
     on:blur={() => (focus = false)}
     on:keyup|preventDefault={handleKeyup} />
 {:else}
-  <div on:dblclick={() => (focus = true)}>
+  <div on:dblclick={handleDblClick}>
     <p>{value}</p>
   </div>
 {/if}

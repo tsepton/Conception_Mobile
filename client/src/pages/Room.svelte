@@ -82,13 +82,13 @@
         <Card on:delete={() => room.cards.delete(card.id)}>
           <div slot="title">
             <TextEdit
-              bind:value={card.title}
-              on:keyup={() => room.cards.update(card)} />
+              value={card.title}
+              on:keyup={(e) => room.cards.update({...card, title: e.detail})} />
           </div>
           <div slot="body">
             <TextEdit
-              bind:value={card.body}
-              on:keyup={() => room.cards.update(card)} />
+              value={card.body}
+              on:keyup={(e) => room.cards.update({...card, body: e.detail})} />
           </div>
         </Card>
       </div>

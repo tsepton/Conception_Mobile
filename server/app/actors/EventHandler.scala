@@ -61,19 +61,22 @@ class EventHandler extends Actor {
   def updateCard(user: ActorRef, json: JsValue): Unit = {
     (json \ "card").asOpt[JsValue] match {
       case None => println("Warning: payload malformed")
-      case Some(json: JsValue) => {
-        Try {
-          val card = new Card(
-            (json \ "id").asOpt[Int].get,
-            (json \ "title").asOpt[String].get,
-            (json \ "body").asOpt[String].get
-          )
-          card
+      case Some(json: JsValue) =>
+        {
+          Try {
+            val title: String = (json \ "title").asOpt[String].get
+            val body: String = (json \ "body").asOpt[String].get
+            new Card(
+              (json \ "id").asOpt[Int].get,
+              title = if (title.length != 0) title else "Default title",
+              body =
+                if (body.length != 0) body else "This the default card body..."
+            )
+          }
         } match {
           case Failure(_)    => println("Warning: payload malformed")
           case Success(card) => getUserRoom(user) ! Room.UpdateCard(card)
         }
-      }
     }
   }
 
